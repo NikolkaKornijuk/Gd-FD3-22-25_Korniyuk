@@ -89,7 +89,6 @@ const Table: React.FC = () => {
           </tbody>
         </table>
       </div>
-
       <button onClick={saveData} disabled={saving}>
         {saving ? "Идёт сохранение" : "Сохранить"}
       </button>
