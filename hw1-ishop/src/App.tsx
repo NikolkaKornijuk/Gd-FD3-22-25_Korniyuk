@@ -34,8 +34,6 @@ function MyTable({ headerNames, items }) {
   );
 }
 
-function TableRow() {}
-
 function App() {
   const items: ItemsProps[] = [
     {
