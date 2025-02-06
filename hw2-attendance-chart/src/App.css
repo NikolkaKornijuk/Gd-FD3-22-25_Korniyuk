@@ -2,5 +2,18 @@
   width: 100%;
   height: 100%;
   text-align: center;
-  background-color: aquamarine;
+}
+
+button {
+  height: 35px;
+  width: 140px;
+  margin: 10px;
+  background-color: rgb(190, 190, 247);
+  border-radius: 5px;
+  border: 2px;
+}
+
+button:hover {
+  background-color: blueviolet;
+  color: antiquewhite;
 }

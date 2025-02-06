@@ -1,21 +1,11 @@
+import { useEffect, useState } from "react";
 import "./App.css";
 import Table from "./components/Table";
+import "./components/table.css";
 
 function App() {
-  function addStudent() {
-    const student = prompt("Введите ФИО студента");
-    console.log(student);
-  }
-
-  function addDate() {
-    const date = prompt("Введите новую дату");
-    console.log(date);
-  }
-
   return (
     <div className="App">
-      <button onClick={addStudent}>Add student</button>
-      <button onClick={addDate}>Add date</button>
       <Table />
     </div>
   );
