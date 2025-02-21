@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+export const LS_KEY_ATTENDANCE_DATA = "attendanceData";
+
 interface AttendanceData {
   [student: string]: {
     [date: string]: boolean;
@@ -15,7 +17,7 @@ const Table: React.FC = () => {
   useEffect(() => {
     try {
       const savedData = JSON.parse(
-        localStorage.getItem("attendanceData") || "{}"
+        localStorage.getItem(LS_KEY_ATTENDANCE_DATA) || "{}"
       );
       if (savedData) {
         setStudents(savedData.students || []);
@@ -39,18 +41,22 @@ const Table: React.FC = () => {
 
   const addStudent = () => {
     const name = prompt("Введите имя студента:");
-    if (name) setStudents((prev) => [...prev, name]);
+    if (name) {
+      setStudents((prev) => [...prev, name]);
+    }
   };
 
   const addDate = () => {
     const date = prompt("Введите дату занятия (гггг-мм-дд):");
-    if (date) setDates((prev) => [...prev, date]);
+    if (date) {
+      setDates((prev) => [...prev, date]);
+    }
   };
 
   const saveData = () => {
     setSaving(true);
     const dataToSave = { students, dates, attendance };
-    localStorage.setItem("attendanceData", JSON.stringify(dataToSave));
+    localStorage.setItem(LS_KEY_ATTENDANCE_DATA, JSON.stringify(dataToSave));
     setTimeout(() => setSaving(false), 2000);
   };
 
