@@ -31,9 +31,9 @@
     "deleteConfirm": "Вы уверены, что хотите удалить этот заказ?",
     "deleteError": "Ошибка при удалении заказа:",
     "saveError": "Ошибка при сохранении заказа:",
-    "searchPlaceholder": "Поиск заказов...",
     "addButton": "Добавить заказ",
     "noOrders": "Заказы не найдены",
+    "selectStatus": "Выберите статус",
     "columns": {
       "id": "ID",
       "product": "Продукт",
@@ -45,8 +45,19 @@
       "createdAt": "Дата создания",
       "updatedAt": "Дата обновления"
     },
+    "searchFields": {
+      "customerName": "Имя клиента",
+      "customerEmail": "Email клиента",
+      "status": "Статус",
+      "productName": "Товар"
+    },
+    "searchPlaceholder": {
+      "customerName": "Поиск по имени...",
+      "customerEmail": "Поиск по email...",
+      "productName": "Поиск по товару..."
+    },
     "status": {
-      "pending": "В ожидании",
+      "pending": "В обработке",
       "completed": "Завершен",
       "cancelled": "Отменен"
     }

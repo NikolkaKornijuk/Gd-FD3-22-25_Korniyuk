@@ -17,8 +17,18 @@ import { useTranslation } from "react-i18next";
 
 type SortDirection = "asc" | "desc";
 type SortableField = keyof Pick<Product, "name" | "price" | "quantity">;
+type SearchableField = keyof Pick<
+  Product,
+  "name" | "description" | "price" | "quantity"
+>;
 
 const pageSizeOptions = [5, 10, 20, 50, 100];
+const searchFields: { value: SearchableField; label: string }[] = [
+  { value: "name", label: "Название" },
+  { value: "description", label: "Описание" },
+  { value: "price", label: "Цена" },
+  { value: "quantity", label: "Количество" },
+];
 
 const ProductsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -31,6 +41,7 @@ const ProductsPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | undefined>();
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchField, setSearchField] = useState<SearchableField>("name");
   const [sortConfig, setSortConfig] = useState<{
     key: SortableField;
     direction: SortDirection;
@@ -42,10 +53,9 @@ const ProductsPage: React.FC = () => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  // Reset to first page when itemsPerPage or search term changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [itemsPerPage, searchTerm]);
+  }, [itemsPerPage, searchTerm, searchField]);
 
   const requestSort = (key: SortableField) => {
     let direction: SortDirection = "asc";
@@ -70,9 +80,11 @@ const ProductsPage: React.FC = () => {
     let filteredProducts = [...products];
 
     if (searchTerm) {
-      filteredProducts = filteredProducts.filter((product) =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      const lowerSearchTerm = searchTerm.toLowerCase();
+      filteredProducts = filteredProducts.filter((product) => {
+        const fieldValue = String(product[searchField]).toLowerCase();
+        return fieldValue.includes(lowerSearchTerm);
+      });
     }
 
     if (sortConfig !== null) {
@@ -91,9 +103,8 @@ const ProductsPage: React.FC = () => {
     }
 
     return filteredProducts;
-  }, [products, searchTerm, sortConfig]);
+  }, [products, searchTerm, searchField, sortConfig]);
 
-  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = processedProducts.slice(
@@ -106,6 +117,10 @@ const ProductsPage: React.FC = () => {
 
   const handleItemsPerPageChange = (size: number) => {
     setItemsPerPage(size);
+  };
+
+  const handleSearchFieldChange = (field: SearchableField) => {
+    setSearchField(field);
   };
 
   const handleAddProduct = () => {
@@ -151,16 +166,35 @@ const ProductsPage: React.FC = () => {
       <div className="d-flex justify-content-between mb-3 align-items-center">
         <h2>{t("products.title")}</h2>
         <div className="d-flex">
-          <InputGroup className="me-3" style={{ width: "300px" }}>
-            <InputGroup.Text>
-              <FaSearch />
-            </InputGroup.Text>
+          <InputGroup className="me-3" style={{ width: "400px" }}>
+            <Dropdown>
+              <Dropdown.Toggle
+                variant="outline-secondary"
+                id="dropdown-search-field"
+              >
+                {searchFields.find((f) => f.value === searchField)?.label}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {searchFields.map((field) => (
+                  <Dropdown.Item
+                    key={field.value}
+                    active={searchField === field.value}
+                    onClick={() => handleSearchFieldChange(field.value)}
+                  >
+                    {field.label}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
             <Form.Control
               type="text"
               placeholder={t("products.searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            <InputGroup.Text>
+              <FaSearch />
+            </InputGroup.Text>
           </InputGroup>
           <Button variant="primary" onClick={handleAddProduct}>
             {t("products.addButton")}

@@ -27,8 +27,19 @@ type SortableField = keyof Pick<
   | "createdAt"
   | "updatedAt"
 >;
+type SearchableField =
+  | keyof Pick<Order, "customerName" | "customerEmail" | "status">
+  | "productName";
 
 const pageSizeOptions = [5, 10, 20, 50, 100];
+const orderStatuses = ["pending", "completed", "cancelled"];
+
+const searchFields = [
+  { value: "customerName", label: "Имя клиента" },
+  { value: "customerEmail", label: "Email клиента" },
+  { value: "status", label: "Статус" },
+  { value: "productName", label: "Товар" },
+];
 
 const OrdersPage: React.FC = () => {
   const { t } = useTranslation();
@@ -42,6 +53,8 @@ const OrdersPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState<Order | undefined>();
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchField, setSearchField] =
+    useState<SearchableField>("customerName");
   const [sortConfig, setSortConfig] = useState<{
     key: SortableField;
     direction: SortDirection;
@@ -67,10 +80,9 @@ const OrdersPage: React.FC = () => {
     dispatch(fetchOrders());
   }, [dispatch]);
 
-  // Reset to first page when itemsPerPage or search term changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [itemsPerPage, searchTerm]);
+  }, [itemsPerPage, searchTerm, searchField]);
 
   const requestSort = (key: SortableField) => {
     let direction: SortDirection = "asc";
@@ -96,15 +108,16 @@ const OrdersPage: React.FC = () => {
 
     if (searchTerm) {
       const lowerSearchTerm = searchTerm.toLowerCase();
-      filteredOrders = filteredOrders.filter(
-        (order) =>
-          order.customerName.toLowerCase().includes(lowerSearchTerm) ||
-          order.customerEmail.toLowerCase().includes(lowerSearchTerm) ||
-          getProductName(order.productId)
-            .toLowerCase()
-            .includes(lowerSearchTerm) ||
-          order.status.toLowerCase().includes(lowerSearchTerm)
-      );
+      filteredOrders = filteredOrders.filter((order) => {
+        if (searchField === "productName") {
+          const productName = getProductName(order.productId).toLowerCase();
+          return productName.includes(lowerSearchTerm);
+        }
+        const fieldValue = String(
+          order[searchField as keyof Order]
+        ).toLowerCase();
+        return fieldValue.includes(lowerSearchTerm);
+      });
     }
 
     if (sortConfig !== null) {
@@ -131,13 +144,53 @@ const OrdersPage: React.FC = () => {
     }
 
     return filteredOrders;
-  }, [orders, searchTerm, sortConfig, products, getProductName]);
+  }, [orders, searchTerm, searchField, sortConfig, products, getProductName]);
 
-  // Pagination logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = processedOrders.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(processedOrders.length / itemsPerPage);
+  const handleStatusSelect = (status: string) => {
+    setSearchTerm(status);
+  };
+
+  const renderSearchInput = () => {
+    if (searchField === "status") {
+      return (
+        <Dropdown>
+          <Dropdown.Toggle
+            variant="outline-secondary"
+            id="dropdown-status-search"
+          >
+            {searchTerm
+              ? t(`orders.status.${searchTerm}`)
+              : t("orders.selectStatus")}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {orderStatuses.map((status) => (
+              <Dropdown.Item
+                key={status}
+                active={searchTerm === status}
+                onClick={() => handleStatusSelect(status)}
+              >
+                {t(`orders.status.${status}`)}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+      );
+    }
+
+    return (
+      <>
+        <Form.Control
+          type="text"
+          placeholder={t(`orders.searchPlaceholder.${searchField}`)}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <InputGroup.Text>
+          <FaSearch />
+        </InputGroup.Text>
+      </>
+    );
+  };
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -188,21 +241,40 @@ const OrdersPage: React.FC = () => {
       </div>
     );
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = processedOrders.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(processedOrders.length / itemsPerPage);
+
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>{t("orders.title")}</h2>
         <div className="d-flex">
-          <InputGroup className="me-3" style={{ width: "300px" }}>
-            <InputGroup.Text>
-              <FaSearch />
-            </InputGroup.Text>
-            <Form.Control
-              type="text"
-              placeholder={t("orders.searchPlaceholder")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <InputGroup className="me-3" style={{ width: "400px" }}>
+            <Dropdown>
+              <Dropdown.Toggle
+                variant="outline-secondary"
+                id="dropdown-search-field"
+              >
+                {searchFields.find((f) => f.value === searchField)?.label}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {searchFields.map((field) => (
+                  <Dropdown.Item
+                    key={field.value}
+                    active={searchField === field.value}
+                    onClick={() => {
+                      setSearchField(field.value as SearchableField);
+                      setSearchTerm("");
+                    }}
+                  >
+                    {t(`orders.searchFields.${field.value}`)}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+            {renderSearchInput()}
           </InputGroup>
           <Button variant="primary" onClick={handleAddOrder}>
             {t("orders.addButton")}

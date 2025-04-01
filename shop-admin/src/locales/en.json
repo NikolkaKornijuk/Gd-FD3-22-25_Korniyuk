@@ -30,9 +30,9 @@
     "deleteConfirm": "Are you sure you want to delete this order?",
     "deleteError": "Failed to delete order:",
     "saveError": "Failed to save order:",
-    "searchPlaceholder": "Search orders...",
     "addButton": "Add Order",
     "noOrders": "No orders found",
+    "selectStatus": "Select status",
     "columns": {
       "id": "ID",
       "product": "Product",
@@ -43,6 +43,17 @@
       "actions": "Actions",
       "createdAt": "Created Date",
       "updatedAt": "Updated Date"
+    },
+    "searchFields": {
+      "customerName": "Customer name",
+      "customerEmail": "Customer email",
+      "status": "Status",
+      "productName": "Product"
+    },
+    "searchPlaceholder": {
+      "customerName": "Search by name...",
+      "customerEmail": "Search by email...",
+      "productName": "Search by product..."
     },
     "status": {
       "pending": "Pending",
