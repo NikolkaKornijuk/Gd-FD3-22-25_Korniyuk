@@ -1,0 +1,239 @@
+{
+  "header": {
+    "title": "Система управления товарами",
+    "language": "Язык"
+  },
+  "products": {
+    "title": "Продукты",
+    "deleteConfirm": "Вы уверены, что хотите удалить этот продукт?",
+    "saveError": "Ошибка сохранения продукта:",
+    "searchPlaceholder": "Поиск по названию...",
+    "addButton": "Добавить продукт",
+    "noProducts": "Продукты не найдены",
+    "columns": {
+      "id": "ID",
+      "name": "Название",
+      "price": "Цена",
+      "description": "Описание",
+      "quantity": "Количество",
+      "actions": "Действия"
+    }
+  },
+
+  "notFound": {
+    "title": "Страница не найдена",
+    "message": "Мы не смогли найти то, что вы искали.",
+    "homeButton": "Вернуться на главную"
+  },
+  "orders": {
+    "title": "Заказы",
+    "unknownProduct": "Неизвестный продукт",
+    "deleteConfirm": "Вы уверены, что хотите удалить этот заказ?",
+    "deleteError": "Ошибка при удалении заказа:",
+    "saveError": "Ошибка при сохранении заказа:",
+    "searchPlaceholder": "Поиск заказов...",
+    "addButton": "Добавить заказ",
+    "noOrders": "Заказы не найдены",
+    "columns": {
+      "id": "ID",
+      "product": "Продукт",
+      "quantity": "Количество",
+      "customer": "Клиент",
+      "email": "Email",
+      "status": "Статус",
+      "actions": "Действия",
+      "createdAt": "Дата создания",
+      "updatedAt": "Дата обновления"
+    },
+    "status": {
+      "pending": "В ожидании",
+      "completed": "Завершен",
+      "cancelled": "Отменен"
+    }
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "currencySymbol": "₽",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "saving": "Сохранение...",
+    "errorLoading": "Ошибка загрузки данных",
+    "refresh": "Обновить"
+  },
+  "register": {
+    "title": "Регистрация",
+    "registerButton": "Зарегистрироваться",
+    "registeringButton": "Регистрация...",
+    "loginPrompt": "Уже есть аккаунт?",
+    "loginLink": "Войти",
+    "form": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "Введите ваш email",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "Не менее 6 символов",
+      "confirmPasswordLabel": "Подтвердите пароль",
+      "confirmPasswordPlaceholder": "Повторите ваш пароль"
+    },
+    "errors": {
+      "passwordMismatch": "Пароли не совпадают",
+      "passwordLength": "Пароль должен быть не менее 6 символов",
+      "emailInUse": "Этот email уже используется",
+      "invalidEmail": "Некорректный email адрес",
+      "weakPassword": "Пароль слишком простой",
+      "generalError": "Ошибка при создании аккаунта"
+    }
+  },
+  "stats": {
+    "title": "Статистика",
+    "unknownProduct": "Неизвестный товар",
+    "percentage": "Процент",
+    "export": {
+      "json": "Экспорт в JSON",
+      "csv": "Экспорт в CSV",
+      "headers": {
+        "id": "ID",
+        "product": "Товар",
+        "customer": "Клиент",
+        "status": "Статус",
+        "date": "Дата"
+      }
+    },
+    "filters": {
+      "timeRange": "Период",
+      "week": "Неделя",
+      "month": "Месяц",
+      "year": "Год",
+      "product": "Фильтр по товару",
+      "allProducts": "Все товары"
+    },
+    "summary": {
+      "totalProducts": "Всего товаров",
+      "totalOrders": "Всего заказов",
+      "completedOrders": "Завершённых заказов",
+      "conversionRate": "Коэффициент конверсии"
+    },
+    "charts": {
+      "productQuantity": {
+        "title": "Количество товаров",
+        "label": "Количество на складе"
+      },
+      "orderStatus": {
+        "title": "Заказы по статусам"
+      },
+      "productSales": {
+        "title": "Продажи товаров",
+        "label": "Количество заказов"
+      },
+      "ordersOverTime": {
+        "title": "Заказы по времени",
+        "label": "Количество заказов"
+      }
+    }
+  },
+  "months": {
+    "0": "Январь",
+    "1": "Февраль",
+    "2": "Март",
+    "3": "Апрель",
+    "4": "Май",
+    "5": "Июнь",
+    "6": "Июль",
+    "7": "Август",
+    "8": "Сентябрь",
+    "9": "Октябрь",
+    "10": "Ноябрь",
+    "11": "Декабрь"
+  },
+  "navbar": {
+    "brand": "Админка магазина",
+    "products": "Продукты",
+    "orders": "Заказы",
+    "statistics": "Статистика",
+    "login": "Вход",
+    "register": "Регистрация",
+    "logout": "Выйти",
+    "logoutError": "Ошибка выхода:"
+  },
+  "login": {
+    "title": "Вход",
+    "submitButton": "Войти",
+    "registerPrompt": "Нет аккаунта?",
+    "registerLink": "Зарегистрируйтесь",
+    "form": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "Введите ваш email",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "Введите ваш пароль"
+    },
+    "errors": {
+      "invalidEmail": "Некорректный email",
+      "userNotFound": "Пользователь не найден",
+      "wrongPassword": "Неверный пароль",
+      "tooManyAttempts": "Слишком много попыток. Попробуйте позже.",
+      "generalError": "Ошибка входа. Попробуйте снова."
+    }
+  },
+  "orderModal": {
+    "addTitle": "Добавить заказ",
+    "editTitle": "Редактировать заказ",
+    "productLabel": "Продукт",
+    "selectProduct": "Выберите продукт",
+    "quantityLabel": "Количество",
+    "customerNameLabel": "Имя клиента",
+    "customerEmailLabel": "Email клиента",
+    "statusLabel": "Статус",
+    "errors": {
+      "invalidEmail": "Введите корректный email адрес",
+      "submitError": "Ошибка при сохранении заказа:"
+    }
+  },
+  "orderStatus": {
+    "pending": "В ожидании",
+    "completed": "Завершен",
+    "cancelled": "Отменен"
+  },
+  "productModal": {
+    "addTitle": "Добавить продукт",
+    "editTitle": "Редактировать продукт",
+    "nameLabel": "Название",
+    "priceLabel": "Цена ({currency})",
+    "descriptionLabel": "Описание",
+    "quantityLabel": "Количество",
+    "errors": {
+      "saveError": "Ошибка сохранения продукта:",
+      "nameRequired": "Укажите название продукта",
+      "priceInvalid": "Цена должна быть положительным числом",
+      "quantityInvalid": "Количество должно быть положительным числом"
+    }
+  },
+  "loginPage": {
+    "title": "Вход",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Введите ваш email",
+    "passwordLabel": "Пароль",
+    "passwordPlaceholder": "Введите ваш пароль",
+    "loginButton": "Войти",
+    "loggingIn": "Вход в систему...",
+    "noAccount": "Нет аккаунта?",
+    "registerLink": "Зарегистрироваться",
+    "forgotPassword": "Забыли пароль?",
+    "errors": {
+      "fillAllFields": "Пожалуйста, заполните все поля",
+      "invalidEmail": "Некорректный email адрес",
+      "accountDisabled": "Этот аккаунт был отключен",
+      "userNotFound": "Пользователь не найден",
+      "wrongPassword": "Неверный пароль",
+      "tooManyAttempts": "Слишком много попыток. Попробуйте позже.",
+      "generalError": "Ошибка входа. Попробуйте снова.",
+      "loginError": "Ошибка входа:"
+    }
+  },
+  "pagination": {
+    "itemsPerPage": "Элементов на странице",
+    "showing": "Показано",
+    "of": "из"
+  }
+}

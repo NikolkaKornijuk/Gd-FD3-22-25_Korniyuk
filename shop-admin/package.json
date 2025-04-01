@@ -1,0 +1,74 @@
+{
+  "name": "example_app",
+  "version": "0.1.0",
+  "type": "commonjs",
+  "private": true,
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.6.1",
+    "@types/cors": "^2.8.17",
+    "@types/react-router-dom": "^5.3.3",
+    "bootstrap": "^5.3.3",
+    "chart.js": "^4.4.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "cors": "^2.8.5",
+    "cra-template": "1.2.0",
+    "date-fns": "^2.30.0",
+    "dayjs": "^1.11.13",
+    "express": "^4.21.2",
+    "firebase": "^11.5.0",
+    "framer-motion": "^12.6.2",
+    "i18next": "^24.2.3",
+    "i18next-browser-languagedetector": "^8.0.4",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.10.9",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^15.4.1",
+    "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.4.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "start:server": "ts-node src/api/server/index.ts"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.13.13",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.1",
+    "path-browserify": "^1.0.1",
+    "querystring-es3": "^0.2.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2",
+    "url": "^0.11.4",
+    "util": "^0.12.5"
+  }
+}

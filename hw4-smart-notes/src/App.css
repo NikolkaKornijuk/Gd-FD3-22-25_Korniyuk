@@ -1,0 +1,76 @@
+/* src/styles/App.css */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.notes-container,
+.tags-container {
+  width: 45%;
+  margin: 10px;
+  padding: 15px;
+  border: 1px solid #ccc;
+}
+
+/* src/styles/App.css */
+.note-item,
+.tag-item {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note-item h3,
+.tag-item h3 {
+  margin: 0;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+h1,
+h2 {
+  color: #333;
+}
+
+.app-container__header {
+  display: flex;
+  flex-direction: column;
+  border: none;
+}
+
+.header__buttons {
+  display: flex;
+  justify-content: space-around;
+  margin: 10px;
+}
+
+.app-container__content {
+  display: flex;
+  flex-direction: column;
+}
