@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Alert } from "react-bootstrap";
+import { Button, Form, Alert, InputGroup } from "react-bootstrap";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../api/firebase";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { Eye, EyeSlash } from "react-bootstrap-icons";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -21,11 +24,37 @@ const LoginPage: React.FC = () => {
     }
   }, [currentUser, navigate]);
 
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+
+    if (!value) {
+      setEmailError("");
+    } else if (!validateEmail(value)) {
+      setEmailError(t("loginPage.errors.invalidEmail"));
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !password) {
       setError(t("loginPage.errors.fillAllFields"));
+      return;
+    }
+
+    if (emailError) {
       return;
     }
 
@@ -79,28 +108,45 @@ const LoginPage: React.FC = () => {
               <Form.Control
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
                 placeholder={t("loginPage.emailPlaceholder")}
+                isInvalid={!!emailError}
                 required
               />
+              <Form.Control.Feedback type="invalid">
+                {emailError}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>{t("loginPage.passwordLabel")}</Form.Label>
-              <Form.Control
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t("loginPage.passwordPlaceholder")}
-                required
-              />
+              <InputGroup>
+                <Form.Control
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={t("loginPage.passwordPlaceholder")}
+                  required
+                />
+                <Button
+                  variant="outline-secondary"
+                  onClick={togglePasswordVisibility}
+                  aria-label={
+                    showPassword
+                      ? t("common.hidePassword")
+                      : t("common.showPassword")
+                  }
+                >
+                  {showPassword ? <EyeSlash /> : <Eye />}
+                </Button>
+              </InputGroup>
             </Form.Group>
 
             <Button
               variant="primary"
               type="submit"
               className="w-100 mt-3"
-              disabled={loading}
+              disabled={loading || !!emailError}
             >
               {loading ? t("loginPage.loggingIn") : t("loginPage.loginButton")}
             </Button>

@@ -84,17 +84,29 @@
       "emailLabel": "Email",
       "emailPlaceholder": "Введите ваш email",
       "passwordLabel": "Пароль",
-      "passwordPlaceholder": "Не менее 6 символов",
+      "passwordPlaceholder": "Не менее 8 символов",
       "confirmPasswordLabel": "Подтвердите пароль",
       "confirmPasswordPlaceholder": "Повторите ваш пароль"
     },
     "errors": {
-      "passwordMismatch": "Пароли не совпадают",
-      "passwordLength": "Пароль должен быть не менее 6 символов",
       "emailInUse": "Этот email уже используется",
-      "invalidEmail": "Некорректный email адрес",
       "weakPassword": "Пароль слишком простой",
-      "generalError": "Ошибка при создании аккаунта"
+      "generalError": "Ошибка при создании аккаунта",
+      "fillAllFields": "Пожалуйста, заполните все поля",
+      "invalidEmail": "Пожалуйста, введите корректный email",
+      "passwordMismatch": "Пароли не совпадают",
+      "passwordLength": "Пароль должен содержать минимум 8 символов",
+      "passwordUppercase": "Пароль должен содержать хотя бы одну заглавную букву",
+      "passwordLowercase": "Пароль должен содержать хотя бы одну строчную букву",
+      "passwordNumber": "Пароль должен содержать хотя бы одну цифру",
+      "passwordSpecial": "Пароль должен содержать хотя бы один специальный символ"
+    },
+    "rules": {
+      "minLength": "Минимум 8 символов",
+      "uppercase": "Хотя бы одна заглавная буква (А-Я)",
+      "lowercase": "Хотя бы одна строчная буква (а-я)",
+      "number": "Хотя бы одна цифра (0-9)",
+      "specialChar": "Хотя бы один специальный символ (!@#$%^&*)"
     }
   },
   "stats": {
@@ -240,13 +252,13 @@
     "forgotPassword": "Забыли пароль?",
     "errors": {
       "fillAllFields": "Пожалуйста, заполните все поля",
-      "invalidEmail": "Некорректный email адрес",
       "accountDisabled": "Этот аккаунт был отключен",
       "userNotFound": "Пользователь не найден",
       "wrongPassword": "Неверный пароль",
       "tooManyAttempts": "Слишком много попыток. Попробуйте позже.",
       "generalError": "Ошибка входа. Попробуйте снова.",
-      "loginError": "Ошибка входа:"
+      "loginError": "Ошибка входа:",
+      "invalidEmail": "Пожалуйста, введите корректный email"
     }
   },
   "pagination": {
