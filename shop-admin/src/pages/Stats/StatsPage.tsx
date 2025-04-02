@@ -22,6 +22,14 @@ import StatsFilters from "./StatsFilters";
 import StatsSummary from "./StatsSummary";
 import StatsCharts from "./StatsCharts";
 import LoadingErrorState from "./LoadingErrorState";
+import {
+  subDays,
+  subMonths,
+  subYears,
+  isAfter,
+  isBefore,
+  format,
+} from "date-fns";
 
 ChartJS.register(
   CategoryScale,
@@ -35,20 +43,6 @@ ChartJS.register(
   LineElement,
   ChartDataLabels
 );
-
-interface ChartData {
-  labels: string[];
-  datasets: {
-    label?: string;
-    data: number[];
-    percentages?: number[];
-    backgroundColor: string | string[];
-    borderColor?: string | string[];
-    borderWidth?: number;
-    tension?: number;
-    fill?: boolean;
-  }[];
-}
 
 interface StatsData {
   totalProducts: { current: number; previous: number; change: number };
@@ -71,95 +65,146 @@ const StatsPage: React.FC = () => {
     error: ordersError,
   } = useAppSelector((state) => state.orders);
 
-  const [timeRange, setTimeRange] = useState<"week" | "month" | "year">(
-    "month"
-  );
+  const [timeRange, setTimeRange] = useState<
+    "week" | "month" | "year" | "custom"
+  >("month");
   const [selectedProduct, setSelectedProduct] = useState<string>("all");
+  const [startDate, setStartDate] = useState<Date | null>(
+    subMonths(new Date(), 1)
+  );
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
 
   const filteredOrders = useMemo(() => {
     let result = [...orders];
-
     const now = new Date();
-    const cutoffDate = new Date();
 
-    if (timeRange === "week") {
-      cutoffDate.setDate(now.getDate() - 7);
-    } else if (timeRange === "month") {
-      cutoffDate.setMonth(now.getMonth() - 1);
-    } else {
-      cutoffDate.setFullYear(now.getFullYear() - 1);
+    // Фильтрация по дате
+    if (timeRange !== "custom") {
+      let cutoffDate = new Date();
+
+      if (timeRange === "week") {
+        cutoffDate = subDays(now, 7);
+      } else if (timeRange === "month") {
+        cutoffDate = subMonths(now, 1);
+      } else if (timeRange === "year") {
+        cutoffDate = subYears(now, 1);
+      }
+
+      result = result.filter(
+        (order) =>
+          order.createdAt && isAfter(new Date(order.createdAt), cutoffDate)
+      );
+    } else if (startDate && endDate) {
+      result = result.filter((order) => {
+        if (!order.createdAt) return false;
+        const orderDate = new Date(order.createdAt);
+        return isAfter(orderDate, startDate) && isBefore(orderDate, endDate);
+      });
     }
 
-    result = result.filter(
-      (order) => new Date(order.createdAt || "") >= cutoffDate
-    );
-
+    // Фильтрация по продукту
     if (selectedProduct !== "all") {
       result = result.filter((order) => order.productId === selectedProduct);
     }
 
     return result;
-  }, [orders, timeRange, selectedProduct]);
+  }, [orders, timeRange, selectedProduct, startDate, endDate]);
+
+  const getPreviousPeriodOrders = useMemo(() => {
+    if (timeRange === "custom" && startDate && endDate) {
+      const diff = endDate.getTime() - startDate.getTime();
+      const prevStartDate = new Date(startDate.getTime() - diff);
+      const prevEndDate = new Date(startDate);
+
+      return orders.filter((order) => {
+        if (!order.createdAt) return false;
+        const orderDate = new Date(order.createdAt);
+        return (
+          isAfter(orderDate, prevStartDate) && isBefore(orderDate, prevEndDate)
+        );
+      });
+    }
+
+    let prevCutoffDate = new Date();
+    let cutoffDate = new Date();
+
+    if (timeRange === "week") {
+      cutoffDate = subDays(prevCutoffDate, 7);
+      prevCutoffDate = subDays(cutoffDate, 7);
+    } else if (timeRange === "month") {
+      cutoffDate = subMonths(prevCutoffDate, 1);
+      prevCutoffDate = subMonths(cutoffDate, 1);
+    } else {
+      cutoffDate = subYears(prevCutoffDate, 1);
+      prevCutoffDate = subYears(cutoffDate, 1);
+    }
+
+    return orders.filter((order) => {
+      if (!order.createdAt) return false;
+      const orderDate = new Date(order.createdAt);
+      return (
+        isAfter(orderDate, prevCutoffDate) && isBefore(orderDate, cutoffDate)
+      );
+    });
+  }, [orders, timeRange, startDate, endDate]);
 
   const stats = useMemo<StatsData>(() => {
-    const prevPeriodOrders = orders.filter((order) => {
-      const orderDate = new Date(order.createdAt || "");
-      const now = new Date();
-      const cutoffDate = new Date();
+    const prevPeriodFilteredOrders =
+      selectedProduct !== "all"
+        ? getPreviousPeriodOrders.filter(
+            (order) => order.productId === selectedProduct
+          )
+        : getPreviousPeriodOrders;
 
-      if (timeRange === "week") {
-        cutoffDate.setDate(now.getDate() - 14);
-      } else if (timeRange === "month") {
-        cutoffDate.setMonth(now.getMonth() - 2);
-      } else {
-        cutoffDate.setFullYear(now.getFullYear() - 2);
-      }
-
-      const prevCutoffDate = new Date(cutoffDate);
-      if (timeRange === "week") {
-        prevCutoffDate.setDate(cutoffDate.getDate() - 7);
-      } else if (timeRange === "month") {
-        prevCutoffDate.setMonth(cutoffDate.getMonth() - 1);
-      } else {
-        prevCutoffDate.setFullYear(cutoffDate.getFullYear() - 1);
-      }
-
-      return orderDate >= prevCutoffDate && orderDate < cutoffDate;
-    }).length;
-
+    // Текущие значения
     const currentOrdersCount = filteredOrders.length;
-    const previousOrdersCount = prevPeriodOrders;
-    const ordersChange = previousOrdersCount
-      ? ((currentOrdersCount - previousOrdersCount) / previousOrdersCount) * 100
+    const currentCompleted = filteredOrders.filter(
+      (o) => o.status === "completed"
+    ).length;
+    const currentConversion = currentOrdersCount
+      ? (currentCompleted / currentOrdersCount) * 100
       : 0;
+
+    // Предыдущие значения
+    const previousOrdersCount = prevPeriodFilteredOrders.length;
+    const previousCompleted = prevPeriodFilteredOrders.filter(
+      (o) => o.status === "completed"
+    ).length;
+    const previousConversion = previousOrdersCount
+      ? (previousCompleted / previousOrdersCount) * 100
+      : 0;
+
+    // Расчет изменений
+    const calculateChange = (current: number, previous: number) =>
+      previous !== 0
+        ? ((current - previous) / previous) * 100
+        : current !== 0
+        ? 100
+        : 0;
 
     return {
       totalProducts: {
         current: products.length,
-        previous: 0,
+        previous: products.length,
         change: 0,
       },
       totalOrders: {
         current: currentOrdersCount,
         previous: previousOrdersCount,
-        change: ordersChange,
+        change: calculateChange(currentOrdersCount, previousOrdersCount),
       },
       completedOrders: {
-        current: filteredOrders.filter((o) => o.status === "completed").length,
-        previous: 0,
-        change: 0,
+        current: currentCompleted,
+        previous: previousCompleted,
+        change: calculateChange(currentCompleted, previousCompleted),
       },
       conversionRate: {
-        current: filteredOrders.length
-          ? (filteredOrders.filter((o) => o.status === "completed").length /
-              filteredOrders.length) *
-            100
-          : 0,
-        previous: 0,
-        change: 0,
+        current: currentConversion,
+        previous: previousConversion,
+        change: calculateChange(currentConversion, previousConversion),
       },
     };
-  }, [products, filteredOrders, orders, timeRange]);
+  }, [products, filteredOrders, getPreviousPeriodOrders, selectedProduct]);
 
   const calculatePercentages = (data: number[]) => {
     const total = data.reduce((a, b) => a + b, 0);
@@ -168,12 +213,7 @@ const StatsPage: React.FC = () => {
     );
   };
 
-  const chartsData = useMemo<{
-    productQuantity: ChartData;
-    orderStatus: ChartData;
-    productSales: ChartData;
-    ordersOverTime: ChartData;
-  }>(() => {
+  const chartsData = useMemo(() => {
     const orderStatusData = [
       filteredOrders.filter((o) => o.status === "pending").length,
       filteredOrders.filter((o) => o.status === "completed").length,
@@ -185,17 +225,28 @@ const StatsPage: React.FC = () => {
         filteredOrders.filter((order) => order.productId === product.id).length
     );
 
-    const ordersOverTimeData = Array.from({ length: 12 }, (_, i) => {
-      const date = new Date();
-      date.setMonth(date.getMonth() - (11 - i));
-      return filteredOrders.filter((order) => {
-        const orderDate = new Date(order.createdAt || "");
-        return (
-          orderDate.getMonth() === date.getMonth() &&
-          orderDate.getFullYear() === date.getFullYear()
-        );
-      }).length;
+    // Группировка по дням/неделям/месяцам в зависимости от выбранного периода
+    let groupFormat = "MMM yyyy";
+    if (
+      timeRange === "week" ||
+      (timeRange === "custom" &&
+        startDate &&
+        endDate &&
+        endDate.getTime() - startDate.getTime() < 30 * 24 * 60 * 60 * 1000)
+    ) {
+      groupFormat = "dd MMM";
+    }
+
+    const ordersByDate: Record<string, number> = {};
+    filteredOrders.forEach((order) => {
+      if (!order.createdAt) return;
+      const dateKey = format(new Date(order.createdAt), groupFormat);
+      ordersByDate[dateKey] = (ordersByDate[dateKey] || 0) + 1;
     });
+
+    const sortedDates = Object.keys(ordersByDate).sort(
+      (a, b) => new Date(a).getTime() - new Date(b).getTime()
+    );
 
     return {
       productQuantity: {
@@ -248,16 +299,11 @@ const StatsPage: React.FC = () => {
         ],
       },
       ordersOverTime: {
-        labels: Array.from({ length: 12 }, (_, i) => {
-          const date = new Date();
-          date.setMonth(date.getMonth() - (11 - i));
-          return t(`months.${date.getMonth()}`);
-        }),
+        labels: sortedDates,
         datasets: [
           {
             label: t("stats.charts.ordersOverTime.label"),
-            data: ordersOverTimeData,
-            percentages: calculatePercentages(ordersOverTimeData),
+            data: sortedDates.map((date) => ordersByDate[date]),
             borderColor: "rgba(255, 159, 64, 1)",
             backgroundColor: "rgba(255, 159, 64, 0.5)",
             tension: 0.1,
@@ -266,7 +312,7 @@ const StatsPage: React.FC = () => {
         ],
       },
     };
-  }, [products, filteredOrders, t]);
+  }, [products, filteredOrders, t, timeRange, startDate, endDate]);
 
   const chartOptions = {
     responsive: true,
@@ -309,12 +355,7 @@ const StatsPage: React.FC = () => {
     },
   };
 
-  useEffect(() => {
-    dispatch(fetchProducts());
-    dispatch(fetchOrders());
-  }, [dispatch]);
-
-  const handleExport = (type: "csv" | "json") => {
+  const handleExport = (type: "json") => {
     const data = {
       products,
       orders: filteredOrders,
@@ -323,55 +364,30 @@ const StatsPage: React.FC = () => {
       filters: {
         timeRange,
         selectedProduct,
+        startDate,
+        endDate,
       },
     };
 
-    if (type === "json") {
-      const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `stats-export-${new Date().toISOString().slice(0, 10)}.json`;
-      a.click();
-    } else {
-      const headers = [
-        t("stats.export.headers.id"),
-        t("stats.export.headers.product"),
-        t("stats.export.headers.customer"),
-        t("stats.export.headers.status"),
-        t("stats.export.headers.date"),
-      ];
-      const csvRows = [
-        headers.join(","),
-        ...filteredOrders.map((order) =>
-          [
-            order.id,
-            products.find((p) => p.id === order.productId)?.name ||
-              t("stats.unknownProduct"),
-            order.customerName,
-            t(`orders.status.${order.status}`),
-            order.createdAt,
-          ]
-            .map((field) => `"${field}"`)
-            .join(",")
-        ),
-      ];
-
-      const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `orders-export-${new Date().toISOString().slice(0, 10)}.csv`;
-      a.click();
-    }
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `stats-export-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
   };
 
   const handleRefresh = () => {
     dispatch(fetchProducts());
     dispatch(fetchOrders());
   };
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+    dispatch(fetchOrders());
+  }, [dispatch]);
 
   if (productsLoading || ordersLoading) {
     return <LoadingErrorState loading={true} />;
@@ -391,8 +407,21 @@ const StatsPage: React.FC = () => {
         timeRange={timeRange}
         selectedProduct={selectedProduct}
         products={products}
-        onTimeRangeChange={setTimeRange}
+        startDate={startDate}
+        endDate={endDate}
+        onTimeRangeChange={(range) => {
+          setTimeRange(range);
+          if (range !== "custom") {
+            setStartDate(null);
+            setEndDate(null);
+          }
+        }}
         onProductChange={setSelectedProduct}
+        onDateChange={(start, end) => {
+          setStartDate(start);
+          setEndDate(end);
+          if (start && end) setTimeRange("custom");
+        }}
       />
 
       <StatsSummary stats={stats} />

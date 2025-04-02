@@ -100,6 +100,7 @@
     "title": "Statistics Dashboard",
     "unknownProduct": "Unknown product",
     "percentage": "Percentage",
+
     "export": {
       "json": "Export as JSON",
       "csv": "Export as CSV",
@@ -117,7 +118,10 @@
       "month": "Month",
       "year": "Year",
       "product": "Filter by Product",
-      "allProducts": "All Products"
+      "allProducts": "All Products",
+      "custom": "Custom",
+      "startDate": "Start Date",
+      "endDate": "End Date"
     },
     "summary": {
       "totalProducts": "Total Products",

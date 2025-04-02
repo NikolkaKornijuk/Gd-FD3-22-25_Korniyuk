@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 interface StatsHeaderProps {
   onRefresh: () => void;
-  onExport: (type: "csv" | "json") => void;
+  onExport: (type: "json") => void;
 }
 
 const StatsHeader: React.FC<StatsHeaderProps> = ({ onRefresh, onExport }) => {
@@ -26,13 +26,6 @@ const StatsHeader: React.FC<StatsHeaderProps> = ({ onRefresh, onExport }) => {
             onClick={() => onExport("json")}
           >
             {t("stats.export.json")}
-          </Button>
-          <Button
-            variant="outline-secondary"
-            size="sm"
-            onClick={() => onExport("csv")}
-          >
-            {t("stats.export.csv")}
           </Button>
         </ButtonGroup>
       </div>

@@ -118,7 +118,10 @@
       "month": "Месяц",
       "year": "Год",
       "product": "Фильтр по товару",
-      "allProducts": "Все товары"
+      "allProducts": "Все товары",
+      "custom": "Произвольный",
+      "startDate": "Начальная дата",
+      "endDate": "Конечная дата"
     },
     "summary": {
       "totalProducts": "Всего товаров",
