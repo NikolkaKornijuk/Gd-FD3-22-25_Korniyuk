@@ -157,9 +157,6 @@ const LoginPage: React.FC = () => {
               {t("loginPage.noAccount")}{" "}
               <a href="/register">{t("loginPage.registerLink")}</a>
             </p>
-            <p>
-              <a href="/forgot-password">{t("loginPage.forgotPassword")}</a>
-            </p>
           </div>
         </div>
       </div>
