@@ -30,6 +30,8 @@ import {
   isBefore,
   format,
 } from "date-fns";
+import { motion, AnimatePresence } from "framer-motion";
+import TopProducts from "./TopProducts";
 
 ChartJS.register(
   CategoryScale,
@@ -401,32 +403,49 @@ const StatsPage: React.FC = () => {
 
   return (
     <Container className="py-4">
-      <StatsHeader onRefresh={handleRefresh} onExport={handleExport} />
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <StatsHeader onRefresh={handleRefresh} onExport={handleExport} />
 
-      <StatsFilters
-        timeRange={timeRange}
-        selectedProduct={selectedProduct}
-        products={products}
-        startDate={startDate}
-        endDate={endDate}
-        onTimeRangeChange={(range) => {
-          setTimeRange(range);
-          if (range !== "custom") {
-            setStartDate(null);
-            setEndDate(null);
-          }
-        }}
-        onProductChange={setSelectedProduct}
-        onDateChange={(start, end) => {
-          setStartDate(start);
-          setEndDate(end);
-          if (start && end) setTimeRange("custom");
-        }}
-      />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
+            <StatsFilters
+              timeRange={timeRange}
+              selectedProduct={selectedProduct}
+              products={products}
+              startDate={startDate}
+              endDate={endDate}
+              onTimeRangeChange={setTimeRange}
+              onProductChange={setSelectedProduct}
+              onDateChange={(start, end) => {
+                setStartDate(start);
+                setEndDate(end);
+                if (start && end) setTimeRange("custom");
+              }}
+            />
+          </motion.div>
 
-      <StatsSummary stats={stats} />
+          <StatsSummary stats={stats} />
 
-      <StatsCharts chartsData={chartsData} chartOptions={chartOptions} />
+          <StatsCharts chartsData={chartsData} chartOptions={chartOptions} />
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="mt-4"
+          >
+            <TopProducts products={products} orders={filteredOrders} />
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
     </Container>
   );
 };

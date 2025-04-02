@@ -145,6 +145,10 @@
         "title": "Orders Over Time",
         "label": "Number of orders"
       }
+    },
+    "topProducts": {
+      "title": "Top Products",
+      "orders": "orders"
     }
   },
   "months": {
