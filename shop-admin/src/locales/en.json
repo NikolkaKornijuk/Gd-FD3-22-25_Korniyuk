@@ -71,7 +71,9 @@
     "save": "Save",
     "saving": "Saving...",
     "errorLoading": "Error loading data",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "register": {
     "title": "Register",
